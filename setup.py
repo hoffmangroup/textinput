@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-"""fastfileinput: streamlined version of stdlib fileinput
+"""textinput: streamlined version of stdlib fileinput
 
 Typical use is:
 
-    import fileinput
-    for line in fileinput.input():
+    import textinput
+    for line in fileinput.lines():
         process(line)
 
 This iterates over the lines of all files listed in sys.argv[1:],
@@ -32,5 +32,5 @@ setup(name=name,
       license="GNU GPL",
       long_description = long_description,
       package_dir = {'': 'lib'},
-      py_modules = ['fastfileinput']
+      py_modules = ['textinput']
       )
