@@ -1,0 +1,48 @@
+#!/usr/bin/env python2.3
+# -*- python -*-
+from __future__ import division
+
+__version__ = "$Revision: 1.1 $"
+
+from optparse import make_option, OptionParser
+import sys
+
+import tabdelim
+
+def parse_options(args):
+    global options
+
+    parser = OptionParser(usage="%prog [OPTION]... EXPR [FILE]...",
+                          version="%%prog %s" % __version__,
+                          option_list = [
+        make_option("-H", "--no-header",
+                    action="store_true", dest="listmode", default=False,
+                    help="input does not contain a header line")
+        ])
+    options, args = parser.parse_args(args)
+
+    return args
+
+def main(args):
+    args = parse_options(args)
+
+    code = compile(args[0], "<string>", "eval")
+
+    if options.listmode:
+        reader_func = tabdelim.listinput
+    else:
+        reader_func = tabdelim.dictinput
+        
+    reader = reader_func(files=args[1:])
+    writer = reader.writer()
+    
+    for row in reader:
+        if options.listmode:
+            if eval(code, globals(), dict(_=row)):
+                writer.writerow(row)
+        else:
+            if eval(code, globals(), row):
+                writer.writerow(row)
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

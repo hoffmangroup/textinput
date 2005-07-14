@@ -32,5 +32,5 @@ setup(name=name,
       license="GNU GPL",
       long_description = long_description,
       package_dir = {'': 'lib'},
-      py_modules = ['textinput']
+      py_modules = ['tabdelim', 'textinput']
       )
