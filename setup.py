@@ -33,4 +33,6 @@ setup(name=name,
       long_description = long_description,
       package_dir = {'': 'lib'},
       py_modules = ['tabdelim', 'textinput']
+      scripts = ['scripts/innerjoin',
+                 'scripts/filter'],
       )
