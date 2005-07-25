@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 
 """
 textinput: streamlined version of stdlib fileinput
@@ -42,6 +42,11 @@ def _get_filenames(filenames):
     return filenames
 
 def files(filenames=None, **kwargs):
+    """usage:
+
+    for textfilename, textfile in files(filenames):
+        pass
+    """
     for filename in _get_filenames(filenames):
         yield filename, open(filename, **kwargs)
 
