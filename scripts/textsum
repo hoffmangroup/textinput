@@ -2,7 +2,7 @@
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 
 """
 textsum: DESCRIPTION
@@ -13,7 +13,7 @@ import textinput
 
 def textsum(*args):
     for textfilename, textfile in textinput.files():
-        ints = map(int, infile)
+        ints = map(int, textfile)
         print sum(ints)/len(ints)
 
 def parse_options(args):
