@@ -2,7 +2,7 @@
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.7 $"
 
 """
 textsum: DESCRIPTION
@@ -21,7 +21,7 @@ def textsum(*args):
 
         try:
             print sum(ints)/len(ints)
-        except ZeroDivisionError:
+        except (ValueError, ZeroDivisionError):
             print "NA"
 
 def parse_options(args):
