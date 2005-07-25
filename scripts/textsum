@@ -2,7 +2,7 @@
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.7 $"
+__version__ = "$Revision: 1.8 $"
 
 """
 textsum: DESCRIPTION
@@ -15,11 +15,11 @@ def textsum(*args):
     textfileitems = list(textinput.files(args))
     
     for textfilename, textfile in textfileitems:
-        ints = map(int, textfile)
         if len(textfileitems) > 1:
             print "%s:" % textfilename,
 
         try:
+            ints = map(int, textfile)
             print sum(ints)/len(ints)
         except (ValueError, ZeroDivisionError):
             print "NA"
