@@ -34,5 +34,6 @@ setup(name=name,
       package_dir = {'': 'lib'},
       py_modules = ['tabdelim', 'textinput'],
       scripts = ['scripts/innerjoin',
-                 'scripts/filter'],
+                 'scripts/filter',
+                 'scripts/textsum'],
       )
