@@ -2,38 +2,21 @@
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 
-from optparse import make_option, OptionParser
 import sys
 
 import tabdelim
 
-def parse_options(args):
-    global options
-
-    parser = OptionParser(usage="%prog [OPTION]... EXPR [FILE]...",
-                          version="%%prog %s" % __version__,
-                          option_list = [
-        make_option("-H", "--no-header",
-                    action="store_true", dest="listmode", default=False,
-                    help="input does not contain a header line")
-        ])
-    options, args = parser.parse_args(args)
-
-    return args
-
-def main(args):
-    args = parse_options(args)
-
-    code = compile(args[0], "<string>", "eval")
+def filter(codestr, *filenames):
+    code = compile(codestr, "<string>", "eval")
 
     if options.listmode:
         reader_func = tabdelim.listinput
     else:
         reader_func = tabdelim.dictinput
         
-    reader = reader_func(files=args[1:])
+    reader = reader_func(filenames)
     writer = reader.writer()
     
     for row in reader:
@@ -43,6 +26,28 @@ def main(args):
         else:
             if eval(code, globals(), row):
                 writer.writerow(row)
+
+def parse_options(args):
+    from optparse import OptionParser
+
+    global options
+    
+    usage = "%prog [OPTION]..."
+    version = "%%prog %s" % __version__
+    parser = OptionParser(usage=usage, version=version)
+
+    parser.add_option("-H", "--no-header",
+                      action="store_true", dest="listmode",
+                      help="input does not contain a header line")
+    
+    options, args = parser.parse_args(args)
+
+    return args
+
+def main(args):
+    args = parse_options(args)
+
+    return filter(*args)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

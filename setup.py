@@ -35,5 +35,5 @@ setup(name=name,
       py_modules = ['tabdelim', 'textinput'],
       scripts = ['scripts/innerjoin',
                  'scripts/filter',
-                 'scripts/textsum'],
+                 'scripts/mean'],
       )
