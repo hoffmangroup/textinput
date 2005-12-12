@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 
 import csv
 import sys
@@ -35,14 +35,14 @@ class _ReaderWriter(object):
     def set_reader(self, *args, **keywds):
         if self._started:
             raise RuntimeError, "iteration already started"
-        
+
         self._reader_args = args
         self._reader_keywds = keywds
 
     def set_writer(self, *args, **keywds):
         if self._started:
             raise RuntimeError, "iteration already started"
-        
+
         self._writer_args = args
         self._writer_keywds = keywds
 
@@ -51,7 +51,7 @@ class _ReaderWriter(object):
             raise RuntimeError, "iteration already started"
 
         self._started = True
-        
+
         reader = self._reader_factory(*self._reader_args,
                                       **self._reader_keywds)
         writer = reader.writer(*self._writer_args, **self._writer_keywds)
@@ -106,6 +106,17 @@ listinput = tools2.partial(io, ListReader)
 #### dict versions
 
 class DictReader(csv.DictReader):
+    """
+    >>> text = "foodstuff source\n" \
+    ... "ham pigs\n" \
+    ... "spam factories\n"
+    >>> reader = DictReader(text, delimiter=" ")
+    >>> row = reader.next()
+    >>> row["source"]
+    'pigs'
+    >>> row["foodstuff"]
+    'ham'
+    """
     def __init__(self, f, fieldnames=None, restkey=None, restval=None,
                  dialect=None, *args, **keywds):
         self.dialect = dialect
@@ -113,14 +124,15 @@ class DictReader(csv.DictReader):
         if dialect is None:
             dialect = "excel-tab"
 
+        iterator = iter(f)
         if fieldnames is None:
             self.header = True
-            fieldnames = csv.reader(f, dialect, *args, **keywds).next()
+            fieldnames = csv.reader(iterator, dialect, *args, **keywds).next()
         else:
             self.header = False
 
-        csv.DictReader.__init__(self, f, fieldnames, restkey, restval, dialect,
-                                *args, **keywds)
+        csv.DictReader.__init__(self, iterator, fieldnames,
+                                restkey, restval, dialect, *args, **keywds)
 
     def writer(self, f=sys.stdout, fieldnames=None, restval=None,
                extrasaction="raise", dialect=None, header=None,
@@ -152,17 +164,17 @@ class DictWriter(csv.DictWriter):
                  dialect="unix-tab", header=True, *args, **keywds):
         csv.DictWriter.__init__(self, f, fieldnames, restval, extrasaction,
                                 dialect, *args, **keywds)
-        
+
         if header:
             self.writeheader()
-                 
+
     def writeheader(self):
         self.writerow(dict((fieldname, fieldname)
                            for fieldname in self.fieldnames))
 
 class DictReaderWriter(_ReaderWriter):
     _reader_factory = DictReader
-    
+
     def __init__(self, f=None, fieldnames=None, restkey=None, restval=None,
                  extrasaction=None, dialect=None, header=None, prepend=None,
                  append=None, *args, **keywds):
