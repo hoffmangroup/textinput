@@ -1,36 +1,34 @@
-#!/usr/bin/env python2.3
+#!/usr/bin/env python
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 
 import itertools
-from optparse import make_option, OptionParser
 import sys
 
 import tabdelim
-
-MAIN_TBL_INDEX = 0
-LOOKUP_TBL_INDEX = 1
+from textinput import open
 
 def read_lookup(iterable, col_index):
     res = {}
-    
+
     for row in iterable:
         try:
-            res[row[col_index]] = row[:col_index] + row[col_index+1:] # exclude the joined column
+            # exclude the joined column
+            res[row[col_index]] = row[:col_index] + row[col_index+1:]
         except IndexError:
             pass
-        
+
     return res
 
-def write_joined(reader_writer, col_index, lookup):
+def write_joined(readerwriter, col_index, lookup):
     if options.empty is not None: # could be ""
         len_longest_row = max(itertools.imap(len, lookup.itervalues()))
 
     # XXX: this would be more efficient if I wrote two loops, one
     # for options.empty and one for not
-    for row in reader_writer:
+    for row in readerwriter:
         try:
             lookup_row = lookup[row[col_index]]
             if options.empty is not None:
@@ -42,43 +40,39 @@ def write_joined(reader_writer, col_index, lookup):
             if options.empty is not None:
                 row.extend([options.empty] * len_longest_row)
 
-def handle(filename):
-    if filename == "-":
-        return sys.stdin
-    else:
-        return file(filename)
-
 def parse_options(args):
+    from optparse import OptionParser
+
     global options
 
-    parser = OptionParser(usage="%prog [OPTION]... MAIN-TABLE LOOKUP-TABLE",
-                          version="%%prog %s" % __version__,
-                          option_list=[
-        make_option("-e", "--empty",
-                    action="store", dest="empty", type="string", default=None,
-                    metavar="EMPTY", help="replace missing input fields with EMPTY"),
-        make_option("-1", "",
-                    action="store", dest="field0", type="int", default=1,
-                    metavar="FIELD", help="join on this FIELD of file 1"),
-        make_option("-2", "",
-                    action="store", dest="field1", type="int", default=1,
-                    metavar="FIELD", help="join on this FIELD of file 2"),
-        ])
+    usage = "%prog [OPTION]... MAIN-TABLE LOOKUP-TABLE"
+    version = "%%prog %s" % __version__
+    parser = OptionParser(usage=usage, version=version)
+    parser.add_option("-e", "--empty", metavar="EMPTY",
+                      help="replace missing input fields with EMPTY"),
+    parser.add_option("-1", dest="main_field", type="int", default=1,
+                      metavar="FIELD",
+                      help="join on this FIELD of MAIN-TABLE"),
+    parser.add_option("-2", dest="lookup_field", type="int", default=1,
+                      metavar="FIELD",
+                      help="join on this FIELD of LOOKUP-TABLE"),
+
     options, args = parser.parse_args(args)
 
     return args
+
+def innerjoin(main_filename, lookup_filename):
+    lookup_reader = tabdelim.ListReader(open(lookup_filename))
+    lookup = read_lookup(lookup_reader, options.lookup_field-1)
+
+    main_readerwriter = tabdelim.ListReaderWriter(open(main_filename))
+    write_joined(main_readerwriter, options.main_field-1, lookup)
 
 def main(args):
     args = parse_options(args)
     assert len(args) == 2
 
-    col_indexes = [index-1 for index in (options.field0, options.field1)]
-
-    lookup = read_lookup(tabdelim.ListReader(handle(args[LOOKUP_TBL_INDEX])),
-                         col_indexes[LOOKUP_TBL_INDEX])
-    
-    write_joined(tabdelim.ListReaderWriter(handle(args[MAIN_TBL_INDEX])),
-                 col_indexes[MAIN_TBL_INDEX], lookup)
+    return innerjoin(*args)
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

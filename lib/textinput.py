@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 
 """
 textinput: streamlined version of stdlib fileinput
@@ -59,14 +59,14 @@ def open(filename, *args, **kwargs):
     """Works like built-in file() but returns sys.stdin for -"""
     # XXX: filename == "-", mode == "w" => sys.stdout
     #                       mode == "b" => http://groups-beta.google.com/group/comp.lang.python/browse_frm/thread/e903180cabc62ee7/b7310b2ede2acaea
-    
+
     if filename == "-":
         if args:
             raise ValueError, "can't specify args with filename '-'"
         if kwargs:
             raise ValueError, "can't specify kwargs with filename '-'"
         return sys.stdin
-    
+
     return file(filename, *args, **kwargs)
 
 def main(args):
