@@ -2,7 +2,7 @@
 # -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
 
 import itertools
 import sys
@@ -26,18 +26,23 @@ def write_joined(readerwriter, col_index, lookup):
     if options.empty is not None: # could be ""
         len_longest_row = max(itertools.imap(len, lookup.itervalues()))
 
-    # XXX: this would be more efficient if I wrote two loops, one
-    # for options.empty and one for not
-    for row in readerwriter:
-        try:
-            lookup_row = lookup[row[col_index]]
-            if options.empty is not None:
+    # duplication with two loops to save time
+    if options.empty is None:
+        for row in readerwriter:
+            try:
+                lookup_row = lookup[row[col_index]]
+                row.extend(lookup_row)
+            except KeyError:
+                pass
+    else:
+        for row in readerwriter:
+            try:
+                lookup_row = lookup[row[col_index]]
                 len_difference = len_longest_row - len(lookup_row)
                 if len_difference > 0:
                     lookup_row.extend([options.empty] * len_difference)
-            row.extend(lookup_row)
-        except KeyError:
-            if options.empty is not None:
+                row.extend(lookup_row)
+            except KeyError:
                 row.extend([options.empty] * len_longest_row)
 
 def parse_options(args):
