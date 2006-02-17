@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+# -*- python -*-
+from __future__ import division
+
+__version__ = "$Revision: 1.1 $"
+
+"""
+hidehead: DESCRIPTION
+"""
+
+import subprocess
+import sys
+
+import textinput
+
+def hidehead(args, lines=1, filenames=[]):
+    child = subprocess.Popen(args, stdin=subprocess.PIPE)
+
+    lines_iterator = textinput.lines(filenames)
+    for count in xrange(lines):
+        sys.stdout.write(lines_iterator.next())
+    
+    for line in lines_iterator:
+        child.communicate(line)
+
+def parse_options(args):
+    from optparse import OptionParser
+
+    global options
+
+    usage = "%prog [OPTION]..."
+    version = "%%prog %s" % __version__
+    parser = OptionParser(usage=usage, version=version)
+
+    options, args = parser.parse_args(args)
+
+    return args
+
+def main(args):
+    args = parse_options(args)
+
+    return hidehead(*args)
+
+def _test(*args, **kwargs):
+    import doctest
+    doctest.testmod(sys.modules[__name__], *args, **kwargs)
+
+if __name__ == "__main__":
+    if __debug__:
+        _test()
+    sys.exit(main(sys.argv[1:]))
