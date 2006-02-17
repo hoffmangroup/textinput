@@ -5,7 +5,7 @@
 Typical use is:
 
     import textinput
-    for line in fileinput.lines():
+    for line in textinput.lines():
         process(line)
 
 This iterates over the lines of all files listed in sys.argv[1:],
@@ -45,7 +45,8 @@ setup(name=name,
       py_modules = ['tabdelim', 'textinput'],
       scripts = ['scripts/innerjoin',
                  'scripts/filter',
-                 'scripts/mean'],
+                 'scripts/mean',
+                 'scripts/hidehead'],
       cmdclass = {"install": disttest.install,
                   "test": disttest.test}
       )

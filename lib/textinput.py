@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.4 $"
+__version__ = "$Revision: 1.5 $"
 
 """
 textinput: streamlined version of stdlib fileinput
@@ -9,7 +9,7 @@ textinput: streamlined version of stdlib fileinput
 Typical use is:
 
     import textinput
-    for line in fileinput.lines():
+    for line in textinput.lines():
         process(line)
 
 This iterates over the lines of all files listed in sys.argv[1:],
