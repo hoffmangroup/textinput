@@ -49,5 +49,6 @@ setup(name=name,
                  'scripts/mean',
                  'scripts/hidehead'],
       cmdclass = {"install": disttest.install,
-                  "test": disttest.test}
+                  "test": disttest.test},
+      zip_safe=True
       )
