@@ -5,7 +5,7 @@ from __future__ import division
 intersect: DESCRIPTION
 """
 
-__version__ = "$Revision: 1.1 $"
+__version__ = "$Revision: 1.2 $"
 
 # Copyright 2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
@@ -25,7 +25,9 @@ def get_intersection(filenames):
     return res
 
 def intersect(*filenames):
-    intersection = get_intersection()
+    intersection = get_intersection(filenames)
+
+    print "\n".join(intersection)
 
 def parse_options(args):
     from optparse import OptionParser
