@@ -1,8 +1,16 @@
-#!/usr/bin/env python2.3
-# -*- python -*-
+#!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
+
+"""
+filter: filter tab-delimited files with Python expressions
+
+CODESTR is an expression such as:
+
+default: "int(index) > 42"
+--no-header: "int(_[2]) > 42"
+"""
 
 import sys
 
@@ -11,35 +19,32 @@ import tabdelim
 def filter(codestr, *filenames):
     code = compile(codestr, "<string>", "eval")
 
-    if options.listmode:
-        reader_func = tabdelim.listinput
-    else:
-        reader_func = tabdelim.dictinput
-        
-    reader = reader_func(filenames)
+    reader = options.reader_func(filenames)
     writer = reader.writer()
-    
+
     for row in reader:
-        if options.listmode:
-            if eval(code, globals(), dict(_=row)):
-                writer.writerow(row)
+        if options.reader_func = tabdelim.listinput:
+            eval_locals = dict(_=row)
         else:
-            if eval(code, globals(), row):
-                writer.writerow(row)
+            eval_locals = row
+
+        if eval(code, globals(), eval_locals):
+            writer.writerow(row)
 
 def parse_options(args):
     from optparse import OptionParser
 
     global options
-    
-    usage = "%prog [OPTION]..."
+
+    usage = "%prog [OPTION]... CODESTR [FILE...]"
     version = "%%prog %s" % __version__
     parser = OptionParser(usage=usage, version=version)
 
-    parser.add_option("-H", "--no-header",
-                      action="store_true", dest="listmode",
+    parser.add_option("-H", "--no-header", action="store_const",
+                      dest="reader_func",
+                      const=tabdelim.listinput, default=tabdelim.dictinput,
                       help="input does not contain a header line")
-    
+
     options, args = parser.parse_args(args)
 
     return args

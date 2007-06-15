@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 
 """
 textinput: streamlined version of stdlib fileinput
@@ -51,14 +51,19 @@ def files(filenames=None, **kwargs):
         yield filename, open(filename, **kwargs)
 
 def lines(filenames=None, **kwargs):
+    # XXX: consider closing the file using with_statement
+    # use an option to say if we don't want the file closed
+
     for filename in _get_filenames(filenames):
         for line in open(filename, **kwargs):
             yield line
 
 def open(filename, *args, **kwargs):
     """Works like built-in file() but returns sys.stdin for -"""
-    # XXX: filename == "-", mode == "w" => sys.stdout
-    #                       mode == "b" => http://groups-beta.google.com/group/comp.lang.python/browse_frm/thread/e903180cabc62ee7/b7310b2ede2acaea
+    # XXX: arrange for modes w and b for -:
+    # filename == "-", mode == "w" => sys.stdout
+    # mode == "b" => see this web page:
+    # http://groups-beta.google.com/group/comp.lang.python/browse_frm/thread/e903180cabc62ee7/b7310b2ede2acaea
 
     if filename == "-":
         if args:
