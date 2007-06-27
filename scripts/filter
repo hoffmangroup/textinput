@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 
 """
 filter: filter tab-delimited files with Python expressions
@@ -23,7 +23,7 @@ def filter(codestr, *filenames):
     writer = reader.writer()
 
     for row in reader:
-        if options.reader_func = tabdelim.listinput:
+        if options.reader_func == tabdelim.listinput:
             eval_locals = dict(_=row)
         else:
             eval_locals = row
