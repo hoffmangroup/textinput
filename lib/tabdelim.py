@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.3 $"
+__version__ = "$Revision: 1.4 $"
 
 # Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
@@ -60,24 +60,24 @@ csv.register_dialect("unix-tab", _UnixTabDialect)
 #### both list and dict
 
 class _ReaderWriter(object):
-    def __init__(self, *args, **keywds):
+    def __init__(self, *args, **kwargs):
         self._started = False
-        self.set_reader(*args, **keywds)
+        self.set_reader(*args, **kwargs)
         self.set_writer()
 
-    def set_reader(self, *args, **keywds):
+    def set_reader(self, *args, **kwargs):
         if self._started:
             raise RuntimeError, "iteration already started"
 
         self._reader_args = args
-        self._reader_keywds = keywds
+        self._reader_kwargs = kwargs
 
-    def set_writer(self, *args, **keywds):
+    def set_writer(self, *args, **kwargs):
         if self._started:
             raise RuntimeError, "iteration already started"
 
         self._writer_args = args
-        self._writer_keywds = keywds
+        self._writer_kwargs = kwargs
 
     def __iter__(self):
         if self._started:
@@ -86,49 +86,50 @@ class _ReaderWriter(object):
         self._started = True
 
         reader = self._reader_factory(*self._reader_args,
-                                      **self._reader_keywds)
-        writer = reader.writer(*self._writer_args, **self._writer_keywds)
+                                      **self._reader_kwargs)
+        writer = reader.writer(*self._writer_args, **self._writer_kwargs)
 
         for row in reader:
             yield row
             writer.writerow(row)
 
 def io(readerwriter_factory, filenames=None, inplace=None, backup=None,
-       *args, **keywds):
-    input_keywds = _update_not_None(locals(), {},
+       *args, **kwargs):
+    input_kwargs = _update_not_None(locals(), {},
                                     "filenames", "inplace", "backup")
 
-    f = textinput.lines(**input_keywds)
-    return readerwriter_factory(f, *args, **keywds)
+    f = textinput.lines(**input_kwargs)
+    return readerwriter_factory(f, *args, **kwargs)
 
 #### list versions
 
-class ListReader(tools2.Surrogate):
-    def __init__(self, csvfile, dialect=None, *args, **keywds):
+class ListReader(Surrogate):
+    def __init__(self, csvfile, dialect=None, *args, **kwargs):
         self.dialect = dialect
 
         if dialect is None:
             dialect = "excel-tab"
 
-        data = csv.reader(csvfile, dialect, *args, **keywds)
-        tools2.Surrogate.__init__(self, data)
+        data = csv.reader(csvfile, dialect, *args, **kwargs)
+        Surrogate.__init__(self, data)
 
     def __iter__(self):
         return iter(self._data)
 
-    def writer(self, csvfile=sys.stdout, dialect=None, *args, **keywds):
+    def writer(self, csvfile=sys.stdout, dialect=None, *args, **kwargs):
         if dialect is None:
             dialect = self.dialect
 
         if dialect is None:
             dialect = "unix-tab"
 
-        return ListWriter(csvfile, dialect, *args, **keywds)
+        return ListWriter(csvfile, dialect, *args, **kwargs)
 
-class ListWriter(tools2.Surrogate):
-    def __init__(self, csvfile=sys.stdout, dialect="unix-tab", *args, **keywds):
-        data = csv.writer(csvfile, dialect, *args, **keywds)
-        tools2.Surrogate.__init__(self, data)
+class ListWriter(Surrogate):
+    def __init__(self, csvfile=sys.stdout, dialect="unix-tab",
+                 *args, **kwargs):
+        data = csv.writer(csvfile, dialect, *args, **kwargs)
+        Surrogate.__init__(self, data)
 
 class ListReaderWriter(_ReaderWriter):
     _reader_factory = ListReader
@@ -151,7 +152,7 @@ class DictReader(csv.DictReader):
     'ham'
     """
     def __init__(self, f, fieldnames=None, restkey=None, restval=None,
-                 dialect=None, *args, **keywds):
+                 dialect=None, *args, **kwargs):
         self.dialect = dialect
 
         if dialect is None:
@@ -160,16 +161,16 @@ class DictReader(csv.DictReader):
         iterator = iter(f)
         if fieldnames is None:
             self.header = True
-            fieldnames = csv.reader(iterator, dialect, *args, **keywds).next()
+            fieldnames = csv.reader(iterator, dialect, *args, **kwargs).next()
         else:
             self.header = False
 
         csv.DictReader.__init__(self, iterator, fieldnames,
-                                restkey, restval, dialect, *args, **keywds)
+                                restkey, restval, dialect, *args, **kwargs)
 
     def writer(self, f=sys.stdout, fieldnames=None, restval=None,
                extrasaction="raise", dialect=None, header=None,
-               prepend=[], append=[], *args, **keywds):
+               prepend=[], append=[], *args, **kwargs):
         if fieldnames is None:
             fieldnames = self.fieldnames
 
@@ -190,13 +191,13 @@ class DictReader(csv.DictReader):
             header = self.header
 
         return DictWriter(f, fieldnames, restval, extrasaction,
-                          dialect, header, *args, **keywds)
+                          dialect, header, *args, **kwargs)
 
 class DictWriter(csv.DictWriter):
     def __init__(self, f, fieldnames, restval="", extrasaction="raise",
-                 dialect="unix-tab", header=True, *args, **keywds):
+                 dialect="unix-tab", header=True, *args, **kwargs):
         csv.DictWriter.__init__(self, f, fieldnames, restval, extrasaction,
-                                dialect, *args, **keywds)
+                                dialect, *args, **kwargs)
 
         if header:
             self.writeheader()
@@ -210,31 +211,31 @@ class DictReaderWriter(_ReaderWriter):
 
     def __init__(self, f=None, fieldnames=None, restkey=None, restval=None,
                  extrasaction=None, dialect=None, header=None, prepend=None,
-                 append=None, *args, **keywds):
-        super(DictReaderWriter, self).__init__(*args, **keywds)
+                 append=None, *args, **kwargs):
+        super(DictReaderWriter, self).__init__(*args, **kwargs)
 
-        _update_not_None(locals(), self._reader_keywds,
+        _update_not_None(locals(), self._reader_kwargs,
                          "f", "fieldnames", "restkey", "restval", "dialect")
-        _update_not_None(locals(), self._writer_keywds,
+        _update_not_None(locals(), self._writer_kwargs,
                          "extrasaction", "header", "prepend", "append")
 
 dictio = partial(io, DictReaderWriter)
 dictinput = partial(io, DictReader)
 
-def dictoutput(f=sys.stdout, *args, **keywds):
+def dictoutput(f=sys.stdout, *args, **kwargs):
     """
     can create as many as necessary
     """
-    return DictWriter(f, *args, **keywds)
+    return DictWriter(f, *args, **kwargs)
 
 #### __main__
 
 def main(args):
     pass
 
-def _test(*args, **keywds):
+def _test(*args, **kwargs):
     import doctest
-    doctest.testmod(sys.modules[__name__], *args, **keywds)
+    doctest.testmod(sys.modules[__name__], *args, **kwargs)
 
 if __name__ == "__main__":
     if __debug__:
