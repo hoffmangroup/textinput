@@ -1,1 +1,2 @@
+* add setuptools testing
 * have tabdelim use binary mode as per John Machin's c.l.p. comments

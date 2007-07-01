@@ -18,7 +18,9 @@ also allowed.
 __version__ = "0.1.0"
 
 from distutils.core import setup
-import disttest
+import warnings
+
+warnings.filterwarnings('ignore', 'Unknown distribution option')
 
 doclines = __doc__.splitlines()
 name, short_description = doclines[0].split(": ")
@@ -49,7 +51,5 @@ setup(name=name,
                  'scripts/mean',
                  'scripts/hidehead',
                  'scripts/intersect'],
-      cmdclass = {"install": disttest.install,
-                  "test": disttest.test},
       zip_safe=True
       )
