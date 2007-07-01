@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.4 $"
-
 """
 filter: filter tab-delimited files with Python expressions
 
@@ -11,6 +9,10 @@ CODESTR is an expression such as:
 default: "int(index) > 42"
 --no-header: "int(_[2]) > 42"
 """
+
+__version__ = "$Revision: 1.5 $"
+
+# Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
 import sys
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.6 $"
-
 """
 textinput: streamlined version of stdlib fileinput
 
@@ -27,6 +25,10 @@ Global state is not supported.
 
 "files" changed to "filenames"
 """
+
+__version__ = "$Revision: 1.7 $"
+
+# Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
 # XXX: add support for URLs
 # XXX: add command-line mode that evaluates a Python string

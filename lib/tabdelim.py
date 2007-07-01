@@ -1,19 +1,52 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.2 $"
+__version__ = "$Revision: 1.3 $"
+
+# Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
 import csv
+import exceptions
+from functools import partial
 import sys
 
 import textinput
-import tools2
+
+class SurrogateNotInitedError(exceptions.AttributeError):
+    pass
+
+class Surrogate(object):
+    """
+    the data is stored in _data
+
+    >>> list1 = [0, 1, 2, 3]
+    >>> list2 = [4, 5, 6, 7]
+    >>> surrogate = Surrogate(list1)
+    >>> surrogate.reverse()
+    >>> list1
+    [3, 2, 1, 0]
+    >>> surrogate._data = list2
+    >>> surrogate.append(8)
+    >>> list2
+    [4, 5, 6, 7, 8]
+    """
+    def __init__(self, data):
+        self._data = data
+
+    def __getattr__(self, name):
+        if name == "_data":
+            raise SurrogateNotInitedError, name
+        else:
+            try:
+                return getattr(self._data, name)
+            except SurrogateNotInitedError:
+                raise SurrogateNotInitedError, name
 
 def _update_not_None(src, dest, *args):
     for key in args:
-        val = src[key]
-        if val is not None:
-            dest[key] = val
+        value = src[key]
+        if value is not None:
+            dest[key] = value
 
     return dest
 
@@ -100,8 +133,8 @@ class ListWriter(tools2.Surrogate):
 class ListReaderWriter(_ReaderWriter):
     _reader_factory = ListReader
 
-listio = tools2.partial(io, ListReaderWriter)
-listinput = tools2.partial(io, ListReader)
+listio = partial(io, ListReaderWriter)
+listinput = partial(io, ListReader)
 
 #### dict versions
 
@@ -185,8 +218,8 @@ class DictReaderWriter(_ReaderWriter):
         _update_not_None(locals(), self._writer_keywds,
                          "extrasaction", "header", "prepend", "append")
 
-dictio = tools2.partial(io, DictReaderWriter)
-dictinput = tools2.partial(io, DictReader)
+dictio = partial(io, DictReaderWriter)
+dictinput = partial(io, DictReader)
 
 def dictoutput(f=sys.stdout, *args, **keywds):
     """
