@@ -15,7 +15,7 @@ filenames, pass it as the argument to input().  A single file name is
 also allowed.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 from distutils.core import setup
 import warnings
