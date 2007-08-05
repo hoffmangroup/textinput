@@ -10,7 +10,7 @@ default: "int(index) > 42"
 --no-header: "int(_[2]) > 42"
 """
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 
 # Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
@@ -24,14 +24,16 @@ def filter(codestr, *filenames):
     reader = options.reader_func(filenames)
     writer = reader.writer()
 
-    for row in reader:
-        if options.reader_func == tabdelim.listinput:
-            eval_locals = dict(_=row)
-        else:
-            eval_locals = row
+    listinput = options.reader_func == tabdelim.listinput
 
-        if eval(code, globals(), eval_locals):
-            writer.writerow(row)
+    if listinput:
+        for row in reader:
+            if eval(code, globals(), dict(_=row)):
+                writer.writerow(row)
+    else:
+        for row in reader:
+            if eval(code, globals(), row):
+                writer.writerow(row)
 
 def parse_options(args):
     from optparse import OptionParser
