@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division
 
-__version__ = "$Revision: 1.5 $"
+__version__ = "$Revision: 1.6 $"
 
 # Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
@@ -125,7 +125,7 @@ class ListReader(Surrogate):
 
         return ListWriter(csvfile, dialect, *args, **kwargs)
 
-def ListWriter(self, csvfile=sys.stdout, dialect="unix-tab", *args, **kwargs):
+def ListWriter(csvfile=sys.stdout, dialect="unix-tab", *args, **kwargs):
     "factory function"
     return csv.writer(csvfile, dialect, *args, **kwargs)
 
