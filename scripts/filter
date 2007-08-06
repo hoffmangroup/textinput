@@ -10,7 +10,7 @@ default: "int(index) > 42"
 --no-header: "int(_[2]) > 42"
 """
 
-__version__ = "$Revision: 1.7 $"
+__version__ = "$Revision: 1.8 $"
 
 # Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
@@ -51,6 +51,10 @@ def parse_options(args):
                       help="input does not contain a header line")
 
     options, args = parser.parse_args(args)
+
+    if len(args) < 1:
+        parser.print_usage()
+        sys.exit(1)
 
     return args
 
