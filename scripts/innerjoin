@@ -1,8 +1,16 @@
 #!/usr/bin/env python
-# -*- python -*-
 from __future__ import division
 
-__version__ = "$Revision: 1.5 $"
+"""
+innerjoin:
+
+FIELDS can be a comma-delimited list
+
+If your header lines don't match on the match fields, they won't come
+out joined. You'll only get the header lines from the MAIN file.
+"""
+
+__version__ = "$Revision: 1.6 $"
 
 # Copyright 2006-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
