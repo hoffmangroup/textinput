@@ -1,10 +1,22 @@
 ======
  NAME
 ======
+by Michael Hoffman <mmh1@washington.edu>
 
-by Michael Hoffman <hoffman+python-software@ebi.ac.uk>
+Description
+===========
+DESCRIPTION
+
+Prerequisites
+=============
+- Python
 
 Installation
 ============
-python setup.py build
 python setup.py install
+
+License
+=======
+NAME is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.

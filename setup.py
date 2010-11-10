@@ -17,16 +17,16 @@ also allowed.
 
 __version__ = "0.1.2"
 
-from distutils.core import setup
-import warnings
+from ez_setup import use_setuptools
+use_setuptools()
 
-warnings.filterwarnings('ignore', 'Unknown distribution option')
+from setuptools import find_packages, setup
 
 doclines = __doc__.splitlines()
 name, short_description = doclines[0].split(": ")
 long_description = "\n".join(doclines[2:])
 
-url = "http://www.ebi.ac.uk/~hoffman/software/%s/" % name.lower()
+url = "http://noble.gs.washington.edu/~mmh1/software/%s/" % name.lower()
 download_url = "%s%s-%s.tar.gz" % (url, name, __version__)
 
 classifiers = ["License :: OSI Approved :: GNU General Public License (GPL)",
@@ -37,7 +37,7 @@ setup(name=name,
       version=__version__,
       description=short_description,
       author="Michael Hoffman",
-      author_email="hoffman+%s@ebi.ac.uk" % name.lower(),
+      author_email="mmh1@uw.edu",
       url=url,
       download_url=download_url,
       license="GNU GPLv2",
