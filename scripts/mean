@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 from __future__ import division
+from __future__ import print_function
+from six.moves import map
 
 """
 textsum: DESCRIPTION
@@ -18,13 +21,13 @@ def textsum(*args):
 
     for textfilename, textfile in textfileitems:
         if len(textfileitems) > 1:
-            print "%s:" % textfilename,
+            print("%s:" % textfilename, end=' ')
 
         try:
-            ints = map(int, textfile)
-            print sum(ints)/len(ints)
+            ints = list(map(int, textfile))
+            print(sum(ints)/len(ints))
         except (ValueError, ZeroDivisionError):
-            print "NA"
+            print("NA")
 
 def parse_options(args):
     from optparse import OptionParser

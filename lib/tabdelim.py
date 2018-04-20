@@ -1,18 +1,23 @@
 #!/usr/bin/env python
+from __future__ import absolute_import
 from __future__ import division
 
-__version__ = "$Revision: 1.6 $"
+__version__ = "$Revision: 1.4 $"
 
 # Copyright 2005-2007 Michael M. Hoffman <hoffman+software@ebi.ac.uk>
 
 import csv
-import exceptions
 from functools import partial
 import sys
 
+try:
+    from exceptions import AttributeError
+except ImportError:
+    from builtins import AttributeError
+
 import textinput
 
-class SurrogateNotInitedError(exceptions.AttributeError):
+class SurrogateNotInitedError(AttributeError):
     pass
 
 class Surrogate(object):
@@ -35,12 +40,12 @@ class Surrogate(object):
 
     def __getattr__(self, name):
         if name == "_data":
-            raise SurrogateNotInitedError, name
+            raise SurrogateNotInitedError(name)
         else:
             try:
                 return getattr(self._data, name)
             except SurrogateNotInitedError:
-                raise SurrogateNotInitedError, name
+                raise SurrogateNotInitedError(name)
 
 def _update_not_None(src, dest, *args):
     for key in args:
@@ -67,21 +72,21 @@ class _ReaderWriter(object):
 
     def set_reader(self, *args, **kwargs):
         if self._started:
-            raise RuntimeError, "iteration already started"
+            raise RuntimeError("iteration already started")
 
         self._reader_args = args
         self._reader_kwargs = kwargs
 
     def set_writer(self, *args, **kwargs):
         if self._started:
-            raise RuntimeError, "iteration already started"
+            raise RuntimeError("iteration already started")
 
         self._writer_args = args
         self._writer_kwargs = kwargs
 
     def __iter__(self):
         if self._started:
-            raise RuntimeError, "iteration already started"
+            raise RuntimeError("iteration already started")
 
         self._started = True
 
@@ -125,9 +130,11 @@ class ListReader(Surrogate):
 
         return ListWriter(csvfile, dialect, *args, **kwargs)
 
-def ListWriter(csvfile=sys.stdout, dialect="unix-tab", *args, **kwargs):
-    "factory function"
-    return csv.writer(csvfile, dialect, *args, **kwargs)
+class ListWriter(Surrogate):
+    def __init__(self, csvfile=sys.stdout, dialect="unix-tab",
+                 *args, **kwargs):
+        data = csv.writer(csvfile, dialect, *args, **kwargs)
+        Surrogate.__init__(self, data)
 
 class ListReaderWriter(_ReaderWriter):
     _reader_factory = ListReader
@@ -159,7 +166,7 @@ class DictReader(csv.DictReader):
         iterator = iter(f)
         if fieldnames is None:
             self.header = True
-            fieldnames = csv.reader(iterator, dialect, *args, **kwargs).next()
+            fieldnames = next(csv.reader(iterator, dialect, *args, **kwargs))
         else:
             self.header = False
 

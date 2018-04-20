@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+from __future__ import absolute_import
 from __future__ import division
 
 """
@@ -69,12 +71,12 @@ def open(filename, *args, **kwargs):
 
     if filename == "-":
         if args:
-            raise ValueError, "can't specify args with filename '-'"
+            raise ValueError("can't specify args with filename '-'")
         if kwargs:
-            raise ValueError, "can't specify kwargs with filename '-'"
+            raise ValueError("can't specify kwargs with filename '-'")
         return sys.stdin
 
-    return file(filename, *args, **kwargs)
+    return open(filename, *args, **kwargs)
 
 def main(args):
     pass
