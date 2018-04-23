@@ -15,6 +15,7 @@ filenames, pass it as the argument to input().  A single file name is
 also allowed.
 """
 
+from __future__ import absolute_import
 __version__ = "0.1.3"
 
 from ez_setup import use_setuptools
