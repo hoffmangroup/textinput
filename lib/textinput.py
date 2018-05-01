@@ -9,7 +9,7 @@ Typical use is:
 
     import textinput
     for line in textinput.lines():
-        process(line)   
+        process(line)
 
 This iterates over the lines of all files listed in sys.argv[1:],
 defaulting to sys.stdin if the list is empty.  If a filename is '-' it
