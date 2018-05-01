@@ -18,9 +18,6 @@ also allowed.
 from __future__ import absolute_import
 __version__ = "0.1.3"
 
-from ez_setup import use_setuptools
-use_setuptools()
-
 from setuptools import find_packages, setup
 
 doclines = __doc__.splitlines()
